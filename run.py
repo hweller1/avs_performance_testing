@@ -136,7 +136,7 @@ for i_0, coll in enumerate(collections):
 	for test in tests:
 		print(f"running test {num_vecs[i_0]} {test}\n")
 		if 'filtered' in test:
-			exact_results = json.load(open(f'exact_results/{filtered_exact_search_results[test]}'))
+			exact_results = json.load(open(f'../exact_results/{filtered_exact_search_results[test]}'))
 			if "low" in test:
 				filter_clause = {'low_card': {'$eq': 1}}
 			elif "high" in test:
