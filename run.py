@@ -35,29 +35,29 @@ db = client['vector-test']
 # collections = [db['sphere10mm']]
 
 # num_vecs = ['100k', '1M']
-num_vecs = ['10M']
-# num_vecs = ['1M']
+# num_vecs = ['10M']
+num_vecs = ['1M']
 # num_vecs = ['100k']
 
 
 # collections = [db['sphere100k'], db['sphere1mm']]
-collections = [db['sphere10mm']]
-# collections = [db['sphere1mm']]
+# collections = [db['sphere10mm']]
+collections = [db['sphere1mm']]
 # collections = [db['sphere100k']]
 
 
-# indexes = ['1M_sphere_index']
+indexes = ['1M_sphere_index']
 
-indexes = ['10M_sphere_index']
+# indexes = ['10M_sphere_index']
 # indexes = ['100k_sphere_index', '1M_sphere_index']
 
 # indexes = ['100k_sphere_index']
 
-# unfiltered_exact_search_results = ['1M_exact_search_results.json']
+unfiltered_exact_search_results = ['1M_exact_search_results.json']
 
 # unfiltered_exact_search_results = ['100k_exact_search_results.json']
 
-unfiltered_exact_search_results = ['10M_exact_search_results.json']
+# unfiltered_exact_search_results = ['10M_exact_search_results.json']
 # unfiltered_exact_search_results = ['100k_exact_search_results.json', '1M_exact_search_results.json']
 
 filtered_exact_search_results = {'filtered_low_card':'1M_lowcard_exact_search_results.json',
@@ -129,6 +129,7 @@ def run_query(embedding, k, candidates, filter_clause, exact_url_list):
 for i_0, coll in enumerate(collections):
 	if coll == db['sphere1mm']:
 		tests = ['no_filter', 'filtered_low_card', 'filtered_high_card', 'filtered_multicard', 'concurrency_10', 'concurrency_100']
+		# tests = ['no_filter']
 	else:
 		tests = ['no_filter', 'concurrency_10', 'concurrency_100']
 
@@ -212,9 +213,11 @@ for i_0, coll in enumerate(collections):
 			# import pdb; pdb.set_trace()
 			plot_results[f"{num_vecs[i_0]}.k{k}.{test}.concurrency{concurrency}"] = {"Recall": np.mean(recalls) * 100, "Mean Latency": np.mean(times), "p99 Latency": np.percentile(times, 99), "QPS": qps}
 
-
-with open(f"performance_test_results_10M_unsharded_s50.json", "w") as outfile:
+with open(f"results/performance_test_results_1M_2_shards_id_shard_key.json", "w") as outfile:
 	json.dump(plot_results, outfile)
+
+# with open(f"results/performance_test_results_1M_2_shards_id_shard_key.json", "w") as outfile:
+# 	json.dump(plot_results, outfile)
 
 
 
