@@ -6,7 +6,6 @@ Results are collated [here](https://docs.google.com/document/d/1dsulEFhYwj3MufTG
 
 
 Future Improvements (please suggest any you think would be good to perform in a PR):
-- Change result format to csv, ideally matching the final table format agreed upon for publishing these results
 - Factor out test cases into a config file that can be passed to run.py via a CLI
 - Assess accuracy of single shard candidates = 200 against 2 shards candidates = 100
 - 100M vector performance testing

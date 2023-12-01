@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from copy import copy
 from typing import Set
 
+import pandas as pd
 import numpy as np
 import pymongo
 from sentence_transformers import SentenceTransformer
@@ -36,26 +37,26 @@ db = client['vector-test']
 
 # num_vecs = ['100k', '1M']
 # num_vecs = ['10M']
-num_vecs = ['1M']
-# num_vecs = ['100k']
+# num_vecs = ['1M']
+num_vecs = ['100k']
 
 
 # collections = [db['sphere100k'], db['sphere1mm']]
 # collections = [db['sphere10mm']]
-collections = [db['sphere1mm']]
-# collections = [db['sphere100k']]
+# collections = [db['sphere1mm']]
+collections = [db['sphere100k']]
 
 
-indexes = ['1M_sphere_index']
+# indexes = ['1M_sphere_index']
 
 # indexes = ['10M_sphere_index']
 # indexes = ['100k_sphere_index', '1M_sphere_index']
 
-# indexes = ['100k_sphere_index']
+indexes = ['100k_sphere_index']
 
-unfiltered_exact_search_results = ['1M_exact_search_results.json']
+# unfiltered_exact_search_results = ['1M_exact_search_results.json']
 
-# unfiltered_exact_search_results = ['100k_exact_search_results.json']
+unfiltered_exact_search_results = ['100k_exact_search_results.json']
 
 # unfiltered_exact_search_results = ['10M_exact_search_results.json']
 # unfiltered_exact_search_results = ['100k_exact_search_results.json', '1M_exact_search_results.json']
@@ -64,8 +65,11 @@ filtered_exact_search_results = {'filtered_low_card':'1M_lowcard_exact_search_re
 								 'filtered_high_card': '1M_highcard_exact_search_results.json',
 								 'filtered_multicard': '1M_multi_lowcard_exact_search_results.json'}
 
-k_values = [1, 10, 100]
-candidate_values = [64, 100, 1000]
+# k_values = [1, 10, 100]
+# candidate_values = [64, 100, 1000]
+
+k_values = [10, 100]
+candidate_values = [100, 1000]
 plot_results = {}
 num_exact_results = 100
 
@@ -128,6 +132,7 @@ def run_query(embedding, k, candidates, filter_clause, exact_url_list):
 
 for i_0, coll in enumerate(collections):
 	if coll == db['sphere1mm']:
+		# tests = [[]'filtered_low_card', 'filtered_high_card', 'filtered_multicard', 'concurrency_10', 'concurrency_100']
 		tests = ['no_filter', 'filtered_low_card', 'filtered_high_card', 'filtered_multicard', 'concurrency_10', 'concurrency_100']
 		# tests = ['no_filter']
 	else:
@@ -139,16 +144,20 @@ for i_0, coll in enumerate(collections):
 		if 'filtered' in test:
 			exact_results = json.load(open(f'exact_results/{filtered_exact_search_results[test]}'))
 			if "low" in test:
+				filter_type = 'Low Cardinality'
 				filter_clause = {'low_card': {'$eq': 1}}
 			elif "high" in test:
+				filter_type = 'High Cardinality'
 				filter_clause = {'high_card': {'$eq': 1}}
 			else:
+				filter_type = 'Multiple Low Card Filters'
 				filter_clause = {"$and": [
 					{'low_card': {'$eq': 1}},
 					{'low_card_1': {'$eq': 1}},
 					{'low_card_2': {'$eq': 1}}]
 					}
 		else:
+			filter_type = 'Unfiltered'
 			exact_results = json.load(open(f'exact_results/{unfiltered_exact_search_results[i_0]}'))
 			filter_clause = None
 		if 'concurrency' in test:
@@ -211,10 +220,23 @@ for i_0, coll in enumerate(collections):
 				qps = num_exact_results / np.sum(times)
 
 			# import pdb; pdb.set_trace()
-			plot_results[f"{num_vecs[i_0]}.k{k}.{test}.concurrency{concurrency}"] = {"Recall": np.mean(recalls) * 100, "Mean Latency": np.mean(times), "p99 Latency": np.percentile(times, 99), "QPS": qps}
+			plot_results[f"{num_vecs[i_0]}.k{k}.{test}.concurrency{concurrency}"] = {
+		 	   "Limit, numCandidates": (k, candidates),
+		 	   "Concurrent Requests": concurrency,
+		 	   "Filter Type": filter_type,
+				"Recall": np.mean(recalls) * 100,
+			 	"Mean Latency": np.mean(times),
+		 	   # "p99 Latency": np.percentile(times, 99),
+		 	    "QPS": qps}
+# import pdb; pdb.set_trace()
 
-with open(f"results/performance_test_results_1M_2_shards_id_shard_key.json", "w") as outfile:
-	json.dump(plot_results, outfile)
+
+flattened_list = [(outer_key, *inner_dict.values()) for outer_key, inner_dict in plot_results.items()]
+df = pd.DataFrame(flattened_list)
+df.to_csv(f'results/{indexes[0]}_s20_high_cpu.csv')
+
+# with open(f"results/performance_test_results_.json", "w") as outfile:
+# 	json.dump(plot_results, outfile)
 
 # with open(f"results/performance_test_results_1M_2_shards_id_shard_key.json", "w") as outfile:
 # 	json.dump(plot_results, outfile)
