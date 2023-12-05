@@ -10,3 +10,6 @@ Future Improvements (please suggest any you think would be good to perform in a 
 - Assess accuracy of single shard candidates = 200 against 2 shards candidates = 100
 - 100M vector performance testing
 - 768 vs 1536 dim performance testing (to assess wall time as dimensionality increases)
+- More configurations of Limit, numCandidates 
+	- 10,100; 25,250; 50,500; 100,1000; 200,2000
+	- different ratio than 1:10
