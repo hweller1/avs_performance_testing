@@ -13,3 +13,6 @@ Future Improvements (please suggest any you think would be good to perform in a 
 - More configurations of Limit, numCandidates 
 	- 10,100; 25,250; 50,500; 100,1000; 200,2000
 	- different ratio than 1:10
+- Experiment with different types of filters
+	- range filtering
+	- different types
