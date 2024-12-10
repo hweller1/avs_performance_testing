@@ -1,6 +1,6 @@
 # avs_performance_testing
 
-Run Atlas Vector Search under various conditions to assess performance.
+Run Atlas Vector Search under various conditions to assess performance against the [sphere dataset](https://ai.meta.com/blog/introducing-sphere-meta-ais-web-scale-corpus-for-better-knowledge-intensive-nlp/)
 
 
 Future Improvements (please suggest any you think would be good to perform in a PR):
@@ -15,3 +15,8 @@ Future Improvements (please suggest any you think would be good to perform in a 
 	- range filtering
 	- different types
 - Experiment with what concurrency looks like with more search nodes in a replica set 
+
+
+12/10/24 UPDATE
+
+I've added another file which allows for running different test configs against the [cohere wikipedia dataset](https://cohere.com/blog/embedding-archives-wikipedia)
