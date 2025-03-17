@@ -170,11 +170,9 @@ mult = [200, 1000]
 
 
 plot_results = {}
-# num_exact_results  = 100
 
 
 def run_query(embedding, k, candidates, filter_clause, exact_title_list=[], random=False) -> Union[Set, Tuple[float, float]]:
-	# import pdb; pdb.set_trace()
 	if not isinstance(embedding, list):
 		embedding = embedding.tolist()
 	if exact_title_list == [] and not random:
@@ -209,7 +207,6 @@ def run_query(embedding, k, candidates, filter_clause, exact_title_list=[], rand
 						"$project": {"embedding_512": 0}
 						}
 					]
-			# import pdb; pdb.set_trace()
 		results = []
 		x = coll.aggregate(query)
 
@@ -383,7 +380,6 @@ for i_0, coll in enumerate(collections):
 				recalls = []
 				futures = []
 				print(f"running for limit, numCandidates of {k}, {candidates}\n")
-				# import pdb; pdb.set_trace()
 				if original_concurrency is not None:
 					concurrency = original_concurrency
 
@@ -409,7 +405,6 @@ for i_0, coll in enumerate(collections):
 									exact_titles = exact_title_list[f"Unfiltered.{i}"][:query_test_size]
 								else:
 									exact_titles = exact_title_list[f"{test}.{i}"]
-								# import pdb; pdb.set_trace()
 								overlap, query_time = run_query(embedding=embedding,
 																k=k,
 																candidates=candidates,
@@ -449,7 +444,6 @@ for i_0, coll in enumerate(collections):
 
 
 flattened_list = [(outer_key, *inner_dict.values()) for outer_key, inner_dict in plot_results.items()]
-# import pdb; pdb.set_trace()
 df = pd.DataFrame(flattened_list)
 df.columns = ["Test Case", "Limit", "numCandidates", "Concurrent Requests", "Num Test Queries", "Filter Type", "Recall", "Mean Latency (ms)", "p99 Latency", "QPS"]
 df.to_csv(f'results/3_2025_runs/1M_m20_amazon_ecommerce_all_runs_jina512_random_5.csv')
